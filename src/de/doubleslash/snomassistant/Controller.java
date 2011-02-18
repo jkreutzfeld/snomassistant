@@ -1,11 +1,20 @@
 package de.doubleslash.snomassistant;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.http.NameValuePair;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HTTP;
 
 import de.doubleslash.snomassistant.watcher.LockScreenObserver;
 import de.doubleslash.snomassistant.watcher.linux.LockScreenObserverLinux;
@@ -51,12 +60,12 @@ public class Controller {
 
 		if (editIdentity1) {
 			String url = generateUrl("1", enabled);
-			callUrl(url);
+			callUrl(url, "1", enabled);
 		}
 
 		if (editIdentity2) {
 			String url = generateUrl("2", enabled);
-			callUrl(url);
+			callUrl(url, "1", enabled);
 		}
 
 	}
@@ -68,16 +77,26 @@ public class Controller {
 
 	}
 
-	private void callUrl(String url) {
+	private void callUrl(String url, String identity, boolean enabled) {
 		DefaultHttpClient httpclient = new DefaultHttpClient();
 		httpclient.getCredentialsProvider().setCredentials(
 				new AuthScope("snom-" + phone, 80),
 				new UsernamePasswordCredentials(username, password));
-		HttpGet httpget = new HttpGet(url);
-		System.out.println(httpget.getURI());
+		HttpPost httpost = new HttpPost(url);
+		List <NameValuePair> nvps = new ArrayList <NameValuePair>();
+        nvps.add(new BasicNameValuePair("Settings", "Save"));
+        nvps.add(new BasicNameValuePair("user_active"+ identity, (enabled ? "on" : "off")));
+
+        try {
+			httpost.setEntity(new UrlEncodedFormEntity(nvps, HTTP.UTF_8));
+		} catch (UnsupportedEncodingException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		System.out.println(httpost.getURI());
 
 		try {
-			httpclient.execute(httpget);
+			httpclient.execute(httpost);
 		} catch (ClientProtocolException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
