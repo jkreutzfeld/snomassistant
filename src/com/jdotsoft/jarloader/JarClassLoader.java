@@ -795,7 +795,8 @@ public class JarClassLoader extends ClassLoader {
      * Inner class to handle JarClassLoader exceptions  
      */
     private static class JarClassLoaderException extends Exception {
-        JarClassLoaderException(String sMsg) {
+      private static final long serialVersionUID = 1L;
+      JarClassLoaderException(String sMsg) {
             super(sMsg);
         }
         JarClassLoaderException(String sMsg, Throwable eCause) {
