@@ -34,6 +34,10 @@ public class Controller {
 
 	private LockScreenObserver observer;
 
+	private boolean loginOnStartup = false;
+
+	private boolean logoutOnShutdown = false;
+
 	public Controller() {
 		this.propertyHandler = new PropertyHandler();
 		loadValues();
@@ -44,13 +48,13 @@ public class Controller {
 		if (linkWithLock) {
 			if (this.observer == null) {
 				String osName = System.getProperty("os.name");
-				System.out.println("Starting Process for "+osName);
+				System.out.println("Starting Process for " + osName);
 				if (osName.equals("Linux")) {
 					this.observer = new LockScreenObserverLinux(this);
 				} else {
 					this.observer = new LockScreenObserverWindows(this);
 				}
-			} 
+			}
 			System.out.println("Observing..");
 		}
 
@@ -65,7 +69,7 @@ public class Controller {
 
 		if (editIdentity2) {
 			String url = generateUrl("2", enabled);
-			callUrl(url, "1", enabled);
+			callUrl(url, "2", enabled);
 		}
 
 	}
@@ -83,11 +87,12 @@ public class Controller {
 				new AuthScope("snom-" + phone, 80),
 				new UsernamePasswordCredentials(username, password));
 		HttpPost httpost = new HttpPost(url);
-		List <NameValuePair> nvps = new ArrayList <NameValuePair>();
-        nvps.add(new BasicNameValuePair("Settings", "Save"));
-        nvps.add(new BasicNameValuePair("user_active"+ identity, (enabled ? "on" : "off")));
+		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+		nvps.add(new BasicNameValuePair("Settings", "Save"));
+		nvps.add(new BasicNameValuePair("user_active" + identity,
+				(enabled ? "on" : "off")));
 
-        try {
+		try {
 			httpost.setEntity(new UrlEncodedFormEntity(nvps, HTTP.UTF_8));
 		} catch (UnsupportedEncodingException e1) {
 			// TODO Auto-generated catch block
@@ -165,6 +170,10 @@ public class Controller {
 				.get("editIdentity2"));
 		linkWithLock = Boolean.parseBoolean(propertyHandler
 				.get("linkedWithLockScreen"));
+		loginOnStartup = Boolean.parseBoolean(propertyHandler
+				.get("loginOnStartup"));
+		logoutOnShutdown = Boolean.parseBoolean(propertyHandler
+				.get("logoutOnShutdown"));
 	}
 
 	public void saveValues() {
@@ -176,6 +185,9 @@ public class Controller {
 		propertyHandler.set("editIdentity2", Boolean.toString(editIdentity2));
 		propertyHandler.set("linkedWithLockScreen",
 				Boolean.toString(linkWithLock));
+		propertyHandler.set("loginOnStartup", Boolean.toString(loginOnStartup));
+		propertyHandler.set("logoutOnShutdown", Boolean.toString(logoutOnShutdown));
+		
 		propertyHandler.save();
 	}
 
@@ -185,5 +197,23 @@ public class Controller {
 
 	public boolean isLinkWithLock() {
 		return linkWithLock;
+	}
+
+	public boolean isLoginOnStartup() {
+		return loginOnStartup;
+	}
+
+	public boolean isLogoutOnShutdown() {
+		return logoutOnShutdown;
+	}
+
+	public void setLoginOnStartup(boolean selected) {
+		this.loginOnStartup = selected;
+
+	}
+
+	public void setLogoutOnShutdown(boolean selected) {
+		this.logoutOnShutdown = selected;
+
 	}
 }
