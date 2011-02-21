@@ -172,6 +172,7 @@ public class AssistantGui implements ActionListener, DocumentListener
 
       TrayIcon trayIcon = new TrayIcon(createImage("image/snom_logo.gif", "tray icon"),
             "Snom Assistent", popup);
+      trayIcon.setImageAutoSize(true);
       trayIcon.addActionListener(this);
       trayIcon.setActionCommand("trayIconClicked");
 
