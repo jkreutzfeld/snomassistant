@@ -66,7 +66,7 @@ public class AssistantGui implements ActionListener, DocumentListener {
 
 		frmSnomAssistant = new JDialog();
 		frmSnomAssistant.setTitle("Snom Assistent");
-		frmSnomAssistant.setBounds(100, 100, 350, 311);
+		frmSnomAssistant.setBounds(100, 100, 350, 366);
 		frmSnomAssistant.getContentPane().setLayout(null);
 		frmSnomAssistant.setResizable(false);
 
@@ -143,6 +143,20 @@ public class AssistantGui implements ActionListener, DocumentListener {
 		separator.setForeground(Color.LIGHT_GRAY);
 		separator.setBounds(12, 243, 318, 2);
 		frmSnomAssistant.getContentPane().add(separator);
+		
+		JCheckBox chckbxLoginOnStartup = new JCheckBox("Beim Start Identitäten aktivieren");
+		chckbxLoginOnStartup.setBounds(12, 280, 318, 23);
+		chckbxLoginOnStartup.setSelected(controller.isLoginOnStartup());
+		chckbxLoginOnStartup.setActionCommand("loginOnStartup");
+		chckbxLoginOnStartup.addActionListener(this);
+		frmSnomAssistant.getContentPane().add(chckbxLoginOnStartup);
+		
+		JCheckBox chckbxLogoutOnShutdown = new JCheckBox("Beim Beenden Identitäten deaktivieren");
+		chckbxLogoutOnShutdown.setBounds(12, 308, 318, 23);
+		chckbxLogoutOnShutdown.setSelected(controller.isLogoutOnShutdown());
+		chckbxLogoutOnShutdown.setActionCommand("logoutOnShutdown");
+		chckbxLogoutOnShutdown.addActionListener(this);
+		frmSnomAssistant.getContentPane().add(chckbxLogoutOnShutdown);
 
 		SystemTray tray = SystemTray.getSystemTray();
 
@@ -200,6 +214,12 @@ public class AssistantGui implements ActionListener, DocumentListener {
 			frmSnomAssistant.setVisible(true);
 		} else if ("quit".equals(e.getActionCommand())) {
 			System.exit(0);
+		} else if ("loginOnStartup".equals(e.getActionCommand())) {
+			JCheckBox box = (JCheckBox) e.getSource();
+			controller.setLoginOnStartup(box.isSelected());
+		} else if ("logoutOnShutdown".equals(e.getActionCommand())) {
+			JCheckBox box = (JCheckBox) e.getSource();
+			controller.setLogoutOnShutdown(box.isSelected());
 		}
 
 		controller.saveValues();
