@@ -13,11 +13,10 @@
 	<classpathentry kind="lib" path="lib/httpcore-4.1.jar"/>
 	<classpathentry kind="lib" path="lib/httpmime-4.1.jar"/>
 	<classpathentry kind="lib" path="lib/libdbus-java-2.7.jar"/>
+	<classpathentry kind="lib" path="lib/dbus-java-bin-2.7.jar"/>
 	<classpathentry kind="lib" path="lib/debug-disable-1.1.jar"/>
 	<classpathentry kind="lib" path="lib/hexdump-0.2.jar"/>
-	<classpathentry kind="lib" path="lib/unix-0.5.jar"/>
-	<classpathentry kind="lib" path="lib/dbus-java-bin-2.7.jar"/>
-	<classpathentry kind="lib" path="lib/jna.jar"/>
 	<classpathentry kind="lib" path="lib/platform.jar"/>
+	<classpathentry kind="lib" path="lib/unix-0.5.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

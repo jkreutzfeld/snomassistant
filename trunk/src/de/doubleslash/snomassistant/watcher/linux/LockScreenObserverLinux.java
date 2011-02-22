@@ -11,6 +11,7 @@ import de.doubleslash.snomassistant.watcher.LockScreenObserver;
 public class LockScreenObserverLinux implements Runnable, LockScreenObserver {
 	
 	Controller controller;
+	Handler handler;
 
 	public LockScreenObserverLinux(Controller controller) {
 		this.controller = controller;
@@ -22,12 +23,25 @@ public class LockScreenObserverLinux implements Runnable, LockScreenObserver {
 	public void run() {
 		try {
 			DBusConnection connection = DBusConnection.getConnection(DBusConnection.SESSION);
-			connection.addSigHandler(org.gnome.ScreenSaver.ActiveChanged.class, new Handler(controller));
+			handler = new Handler(controller);
+			connection.addSigHandler(org.gnome.ScreenSaver.ActiveChanged.class, handler);
 			
 		} catch (DBusException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void kill() {
+		try {
+			DBusConnection connection = DBusConnection.getConnection(DBusConnection.SESSION);
+			connection.removeSigHandler(org.gnome.ScreenSaver.ActiveChanged.class, handler);
+		} catch (DBusException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 }
