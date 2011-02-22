@@ -212,15 +212,18 @@ public class AssistantGui implements ActionListener, DocumentListener
       else if ("identity1Edit".equals(e.getActionCommand())) {
          JCheckBox box = (JCheckBox) e.getSource();
          controller.setEditIdentity1(box.isSelected());
+         controller.saveValues();
       }
       else if ("identity2Edit".equals(e.getActionCommand())) {
          JCheckBox box = (JCheckBox) e.getSource();
          controller.setEditIdentity2(box.isSelected());
+         controller.saveValues();
       }
       else if ("linkToLockscreen".equals(e.getActionCommand())) {
          JCheckBox box = (JCheckBox) e.getSource();
          controller.setLinkWithLock(box.isSelected());
          controller.watchLockScreen();
+         controller.saveValues();
       }
       else if ("trayIconClicked".equals(e.getActionCommand())) {
          frmSnomAssistant.setVisible(true);
@@ -231,13 +234,13 @@ public class AssistantGui implements ActionListener, DocumentListener
       else if ("loginOnStartup".equals(e.getActionCommand())) {
          JCheckBox box = (JCheckBox) e.getSource();
          controller.setLoginOnStartup(box.isSelected());
+         controller.saveValues();
       }
       else if ("logoutOnShutdown".equals(e.getActionCommand())) {
          JCheckBox box = (JCheckBox) e.getSource();
          controller.setLogoutOnShutdown(box.isSelected());
+         controller.saveValues();
       }
-
-      controller.saveValues();
    }
 
    @Override
