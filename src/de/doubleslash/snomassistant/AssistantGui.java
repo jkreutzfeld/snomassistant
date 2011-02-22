@@ -155,7 +155,7 @@ public class AssistantGui implements ActionListener, DocumentListener
       frmSnomAssistant.getContentPane().add(chckbxLoginOnStartup);
 
       JCheckBox chckbxLogoutOnShutdown = new JCheckBox("Beim Beenden Identitäten deaktivieren");
-      chckbxLogoutOnShutdown.setEnabled(false);
+      chckbxLogoutOnShutdown.setEnabled(System.getProperty("os.name").equals("Linux"));
       chckbxLogoutOnShutdown.setBounds(12, 308, 318, 23);
       chckbxLogoutOnShutdown.setSelected(controller.isLogoutOnShutdown());
       chckbxLogoutOnShutdown.setActionCommand("logoutOnShutdown");

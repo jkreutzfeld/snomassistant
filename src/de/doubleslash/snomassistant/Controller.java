@@ -69,6 +69,11 @@ public class Controller
             }
          }
          System.out.println("Observing..");
+      } else {
+    	  if (this.observer != null) {
+    		  this.observer.kill();
+    		  this.observer = null;
+    	  }
       }
 
    }
