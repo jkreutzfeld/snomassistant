@@ -5,7 +5,7 @@
 	<property name="build" location="build" />
 	<property name="launch4j.dir" location="l4j" />
 
-    <target name="jar">
+    <target name="jar" depends="init">
         <jar destfile="${build}/SnomAssistant.jar" filesetmanifest="mergewithoutmain">
             <manifest>
                 <attribute name="Main-Class" value="de.doubleslash.snomassistant.Starter"/>
@@ -43,13 +43,13 @@
 	</target>
 
 	<target name="compile" depends="init" description="compile the source">
-		<javac srcdir="${src}" destdir="${build}" classpathref="dist.classpath" source="1.4" debug="on" />
+		<javac srcdir="${src}" destdir="${bin}" classpathref="dist.classpath" source="1.6" debug="on" />
 	</target>
 
 	<target name="exe" depends="jar">
 		<taskdef name="launch4j" classname="net.sf.launch4j.ant.Launch4jTask" classpath="${launch4j.dir}/launch4j.jar
 		    :${launch4j.dir}/lib/xstream.jar" />
-		<launch4j configFile="./l4j/SnomAssistant.xml" />
+		<launch4j configFile="${launch4j.dir}/SnomAssistant.xml" />
 	</target>
 
 	<target name="clean" description="clean up">
