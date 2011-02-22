@@ -74,7 +74,8 @@ public class LockScreenObserverWindows implements LockScreenObserver, Runnable {
 		try {
 			exec.waitFor();
 		} catch (InterruptedException e) {
-			System.out.println("Ended.");
+			System.out.println("EventReader interrupted.");
+			exec.destroy();
 		}
 	}
 
