@@ -2,6 +2,7 @@ package de.doubleslash.snomassistant;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,27 +20,26 @@ import de.doubleslash.snomassistant.watcher.LockScreenObserver;
 import de.doubleslash.snomassistant.watcher.linux.LockScreenObserverLinux;
 import de.doubleslash.snomassistant.watcher.windows.LockScreenObserverWindows;
 
-public class Controller
-{
+public class Controller {
 
-   private PropertyHandler    propertyHandler;
+   private PropertyHandler propertyHandler;
 
-   private String             phone            = "";
-   private String             username         = "";
-   private String             password         = "";
+   private String phone = "";
+   private String username = "";
+   private String password = "";
 
-   private boolean            editIdentity1    = false;
-   private boolean            editIdentity2    = false;
-   private boolean            linkWithLock     = false;
+   private boolean editIdentity1 = false;
+   private boolean editIdentity2 = false;
+   private boolean linkWithLock = false;
 
    private LockScreenObserver observer;
 
-   private boolean            loginOnStartup   = false;
+   private boolean loginOnStartup = false;
 
-   private boolean            logoutOnShutdown = false;
+   private boolean logoutOnShutdown = false;
 
-   public Controller()
-   {
+   public Controller() {
+      System.out.println("OS: "+System.getProperty("os.name"));
       this.propertyHandler = new PropertyHandler();
       loadValues();
       watchLockScreen();
@@ -49,37 +49,33 @@ public class Controller
       }
    }
 
-   private void addShutdownHook()
-   {
+   private void addShutdownHook() {
       Runtime run = Runtime.getRuntime();
       run.addShutdownHook(new Thread(new ShutdownHook(this)));
    }
 
-   public void watchLockScreen()
-   {
+   public void watchLockScreen() {
       if (linkWithLock) {
          if (this.observer == null) {
             String osName = System.getProperty("os.name");
             System.out.println("Starting Process for " + osName);
             if (osName.equals("Linux")) {
                this.observer = new LockScreenObserverLinux(this);
-            }
-            else {
+            } else {
                this.observer = new LockScreenObserverWindows(this);
             }
          }
          System.out.println("Observing..");
       } else {
-    	  if (this.observer != null) {
-    		  this.observer.kill();
-    		  this.observer = null;
-    	  }
+         if (this.observer != null) {
+            this.observer.kill();
+            this.observer = null;
+         }
       }
 
    }
 
-   public void setIdentityStatus(boolean enabled)
-   {
+   public void setIdentityStatus(boolean enabled) {
       if (editIdentity1) {
          String url = generateUrl("1", enabled);
          callUrl(url, "1", enabled);
@@ -92,26 +88,26 @@ public class Controller
 
    }
 
-   private String generateUrl(String identity, boolean enabled)
-   {
+   private String generateUrl(String identity, boolean enabled) {
       return "http://snom-" + phone + "/line_login.htm?l=" + identity
-            + "&Settings=Save&user_active" + identity + "=" + (enabled ? "on" : "off");
+            + "&Settings=Save&user_active" + identity + "="
+            + (enabled ? "on" : "off");
    }
 
-   private void callUrl(String url, String identity, boolean enabled)
-   {
+   private void callUrl(String url, String identity, boolean enabled) {
       DefaultHttpClient httpclient = new DefaultHttpClient();
-      httpclient.getCredentialsProvider().setCredentials(new AuthScope("snom-" + phone, 80),
+      httpclient.getCredentialsProvider().setCredentials(
+            new AuthScope("snom-" + phone, 80),
             new UsernamePasswordCredentials(username, password));
       HttpPost httpost = new HttpPost(url);
       List<NameValuePair> nvps = new ArrayList<NameValuePair>();
       nvps.add(new BasicNameValuePair("Settings", "Save"));
-      nvps.add(new BasicNameValuePair("user_active" + identity, (enabled ? "on" : "off")));
+      nvps.add(new BasicNameValuePair("user_active" + identity, (enabled ? "on"
+            : "off")));
 
       try {
          httpost.setEntity(new UrlEncodedFormEntity(nvps, HTTP.UTF_8));
-      }
-      catch (UnsupportedEncodingException e1) {
+      } catch (UnsupportedEncodingException e1) {
          // TODO Auto-generated catch block
          e1.printStackTrace();
       }
@@ -119,134 +115,135 @@ public class Controller
 
       try {
          httpclient.execute(httpost);
-      }
-      catch (ClientProtocolException e) {
+      } catch (ClientProtocolException e) {
          // TODO Auto-generated catch block
          e.printStackTrace();
-      }
-      catch (IOException e) {
-         // TODO Auto-generated catch block
-         e.printStackTrace();
+      } catch (IOException e) {
+         if (e instanceof UnknownHostException) {
+            showError("Das Telefon konnte nicht gefunden werden.");
+         } else {
+            e.printStackTrace();
+         }
       }
    }
 
-   public String getPhone()
-   {
+   private void showError(String string) {
+      System.out.println(string);
+   }
+
+   public String getPhone() {
       return phone;
    }
 
-   public void setPhone(String phone)
-   {
+   public void setPhone(String phone) {
       this.phone = phone;
    }
 
-   public String getUsername()
-   {
+   public String getUsername() {
       return username;
    }
 
-   public void setUsername(String username)
-   {
+   public void setUsername(String username) {
       this.username = username;
    }
 
-   public String getPassword()
-   {
+   public String getPassword() {
       return password;
    }
 
-   public void setPassword(String password)
-   {
+   public void setPassword(String password) {
       this.password = password;
    }
 
-   public boolean isEditIdentity1()
-   {
+   public boolean isEditIdentity1() {
       return editIdentity1;
    }
 
-   public void setEditIdentity1(boolean editIdentity1)
-   {
+   public void setEditIdentity1(boolean editIdentity1) {
       this.editIdentity1 = editIdentity1;
    }
 
-   public boolean isEditIdentity2()
-   {
+   public boolean isEditIdentity2() {
       return editIdentity2;
    }
 
-   public void setEditIdentity2(boolean editIdentity2)
-   {
+   public void setEditIdentity2(boolean editIdentity2) {
       this.editIdentity2 = editIdentity2;
    }
 
-   public PropertyHandler getPropertyHandler()
-   {
+   public PropertyHandler getPropertyHandler() {
       return propertyHandler;
    }
 
-   public void loadValues()
-   {
+   public void loadValues() {
       System.out.println("Loading values..");
       phone = propertyHandler.get("phone");
       username = propertyHandler.get("username");
       password = propertyHandler.get("password");
-      editIdentity1 = Boolean.parseBoolean(propertyHandler.get("editIdentity1"));
-      editIdentity2 = Boolean.parseBoolean(propertyHandler.get("editIdentity2"));
-      linkWithLock = Boolean.parseBoolean(propertyHandler.get("linkedWithLockScreen"));
-      loginOnStartup = Boolean.parseBoolean(propertyHandler.get("loginOnStartup"));
-      logoutOnShutdown = Boolean.parseBoolean(propertyHandler.get("logoutOnShutdown"));
+      editIdentity1 = Boolean
+            .parseBoolean(propertyHandler.get("editIdentity1"));
+      editIdentity2 = Boolean
+            .parseBoolean(propertyHandler.get("editIdentity2"));
+      linkWithLock = Boolean.parseBoolean(propertyHandler
+            .get("linkedWithLockScreen"));
+      loginOnStartup = Boolean.parseBoolean(propertyHandler
+            .get("loginOnStartup"));
+      logoutOnShutdown = Boolean.parseBoolean(propertyHandler
+            .get("logoutOnShutdown"));
    }
 
-   public void setPropertyHandler(PropertyHandler propertyHandler)
-   {
+   public void setPropertyHandler(PropertyHandler propertyHandler) {
       this.propertyHandler = propertyHandler;
    }
 
-   public void saveValues()
-   {
+   public void saveValues() {
       System.out.println("Saving values..");
       propertyHandler.set("phone", phone);
       propertyHandler.set("username", username);
       propertyHandler.set("password", password);
       propertyHandler.set("editIdentity1", Boolean.toString(editIdentity1));
       propertyHandler.set("editIdentity2", Boolean.toString(editIdentity2));
-      propertyHandler.set("linkedWithLockScreen", Boolean.toString(linkWithLock));
+      propertyHandler.set("linkedWithLockScreen",
+            Boolean.toString(linkWithLock));
       propertyHandler.set("loginOnStartup", Boolean.toString(loginOnStartup));
-      propertyHandler.set("logoutOnShutdown", Boolean.toString(logoutOnShutdown));
+      propertyHandler.set("logoutOnShutdown",
+            Boolean.toString(logoutOnShutdown));
 
       propertyHandler.save();
    }
 
-   public void setLinkWithLock(boolean linkWithLock)
-   {
+   public void setLinkWithLock(boolean linkWithLock) {
       this.linkWithLock = linkWithLock;
    }
 
-   public boolean isLinkWithLock()
-   {
+   public boolean isLinkWithLock() {
       return linkWithLock;
    }
 
-   public boolean isLoginOnStartup()
-   {
+   public boolean isLoginOnStartup() {
       return loginOnStartup;
    }
 
-   public boolean isLogoutOnShutdown()
-   {
+   public boolean isLogoutOnShutdown() {
       return logoutOnShutdown;
    }
 
-   public void setLoginOnStartup(boolean selected)
-   {
+   public void setLoginOnStartup(boolean selected) {
       this.loginOnStartup = selected;
 
    }
 
-   public void setLogoutOnShutdown(boolean selected)
-   {
+   public void setLogoutOnShutdown(boolean selected) {
       this.logoutOnShutdown = selected;
 
    }
+   
+   public LockScreenObserver getObserver() {
+      return observer;
+   }
+
+   public void setObserver(LockScreenObserver observer) {
+      this.observer = observer;
+   }
+
 }
