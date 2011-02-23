@@ -1,11 +1,17 @@
 package de.doubleslash.snomassistant;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.ZipException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -42,10 +48,69 @@ public class Controller {
       System.out.println("OS: "+System.getProperty("os.name"));
       this.propertyHandler = new PropertyHandler();
       loadValues();
+      
+      if (System.getProperty("os.name").equals("Windows 7")) {
+         String configured = propertyHandler.get("windowsConfigured");
+         if (configured.equals("") || !Boolean.parseBoolean(configured)){
+            initWindows();
+            propertyHandler.set("windowsConfigured", "true");
+            propertyHandler.save();
+         }
+      }
+      
+      
       watchLockScreen();
       addShutdownHook();
       if (loginOnStartup) {
          setIdentityStatus(true);
+      }
+   }
+
+   private void initWindows() {
+      System.out.println("Initializing Windows Settings");
+      
+      URI uri = null;
+
+      try {
+         uri = Utils.getJarURI();
+      } catch (URISyntaxException e) {
+         // TODO Auto-generated catch block
+         e.printStackTrace();
+      }
+      try {
+         final URI inf = Utils.getFile(uri, "update_logging.inf");
+         
+         new Thread(new Runnable() {
+            @Override
+            public void run() {
+               Runtime run = Runtime.getRuntime();
+               String path = inf.getPath().substring(1).replace('/', '\\');
+               String tempFolderPath = path.substring(0, path.lastIndexOf('\\'));
+               String[] cmds = new String[] {"secedit", "/configure", "/db", tempFolderPath+"\\secedit.sdb", "/cfg", path};
+               try {
+                  System.out.println("Running command: "+StringUtils.join(cmds, " "));
+                  Process exec = run.exec(cmds);
+                  BufferedReader stdInput = new BufferedReader(new InputStreamReader(
+                        exec.getInputStream()));
+                  String s;
+                  while ((s = stdInput.readLine()) != null) {
+                     System.out.println(s);
+                  }
+                  
+                  
+               } catch (IOException e) {
+                  // TODO Auto-generated catch block
+                  e.printStackTrace();
+               }
+            }
+         }).start();
+         
+      } catch (ZipException e) {
+         // TODO Auto-generated catch block
+         e.printStackTrace();
+      } catch (IOException e) {
+         // TODO Auto-generated catch block
+         e.printStackTrace();
       }
    }
 
