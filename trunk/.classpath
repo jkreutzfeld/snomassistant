@@ -18,5 +18,6 @@
 	<classpathentry kind="lib" path="lib/hexdump-0.2.jar"/>
 	<classpathentry kind="lib" path="lib/platform.jar"/>
 	<classpathentry kind="lib" path="lib/unix-0.5.jar"/>
+	<classpathentry kind="lib" path="lib/commons-lang-2.6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

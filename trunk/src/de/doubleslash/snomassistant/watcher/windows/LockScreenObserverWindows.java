@@ -19,6 +19,7 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import de.doubleslash.snomassistant.Controller;
+import de.doubleslash.snomassistant.Utils;
 import de.doubleslash.snomassistant.watcher.LockScreenObserver;
 
 public class LockScreenObserverWindows implements LockScreenObserver, Runnable {
@@ -35,13 +36,13 @@ public class LockScreenObserverWindows implements LockScreenObserver, Runnable {
 		URI uri = null;
 
 		try {
-			uri = getJarURI();
+			uri = Utils.getJarURI();
 		} catch (URISyntaxException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		try {
-			this.exe = getFile(uri, "EventListener.exe");
+			this.exe = Utils.getFile(uri, "EventListener.exe");
 		} catch (ZipException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -76,94 +77,6 @@ public class LockScreenObserverWindows implements LockScreenObserver, Runnable {
 		} catch (InterruptedException e) {
 			System.out.println("EventReader interrupted.");
 			exec.destroy();
-		}
-	}
-
-	private URI getJarURI() throws URISyntaxException {
-		final ProtectionDomain domain;
-		final CodeSource source;
-		final URL url;
-		final URI uri;
-
-		domain = LockScreenObserverWindows.class.getProtectionDomain();
-		source = domain.getCodeSource();
-		url = source.getLocation();
-		uri = url.toURI();
-
-		return (uri);
-	}
-
-	private URI getFile(final URI where, final String fileName)
-			throws ZipException, IOException {
-		final File location;
-		final URI fileURI;
-
-		location = new File(where);
-
-		// not in a JAR, just return the path on disk
-		if (location.isDirectory()) {
-			fileURI = URI.create(where.toString() + fileName);
-		} else {
-			final ZipFile zipFile;
-
-			zipFile = new ZipFile(location);
-
-			try {
-				fileURI = extract(zipFile, fileName);
-			} finally {
-				zipFile.close();
-			}
-		}
-
-		return (fileURI);
-	}
-
-	private URI extract(final ZipFile zipFile, final String fileName)
-			throws IOException {
-		final File tempFile;
-		final ZipEntry entry;
-		final InputStream zipStream;
-		OutputStream fileStream;
-
-		tempFile = File.createTempFile(fileName,
-				Long.toString(System.currentTimeMillis()));
-		tempFile.deleteOnExit();
-		entry = zipFile.getEntry(fileName);
-
-		if (entry == null) {
-			throw new FileNotFoundException("cannot find file: " + fileName
-					+ " in archive: " + zipFile.getName());
-		}
-
-		zipStream = zipFile.getInputStream(entry);
-		fileStream = null;
-
-		try {
-			final byte[] buf;
-			int i;
-
-			fileStream = new FileOutputStream(tempFile);
-			buf = new byte[1024];
-			i = 0;
-
-			while ((i = zipStream.read(buf)) != -1) {
-				fileStream.write(buf, 0, i);
-			}
-		} finally {
-			close(zipStream);
-			close(fileStream);
-		}
-
-		return (tempFile.toURI());
-	}
-
-	private void close(final Closeable stream) {
-		if (stream != null) {
-			try {
-				stream.close();
-			} catch (final IOException ex) {
-				ex.printStackTrace();
-			}
 		}
 	}
 
