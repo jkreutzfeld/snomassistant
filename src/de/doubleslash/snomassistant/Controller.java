@@ -59,11 +59,11 @@ public class Controller {
       }
       
       
-      watchLockScreen();
       addShutdownHook();
       if (loginOnStartup) {
          setIdentityStatus(true);
       }
+      watchLockScreen();
    }
 
    private void initWindows() {
