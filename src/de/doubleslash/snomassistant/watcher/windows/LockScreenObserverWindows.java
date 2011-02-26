@@ -95,6 +95,7 @@ class EventReader implements Runnable {
 
 				case 4800:
 				case 4802:
+				case 4647:
 					controller.setIdentityStatus(false);
 					break;
 				case 4801:
