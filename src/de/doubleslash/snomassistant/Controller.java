@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.zip.ZipException;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -179,7 +180,11 @@ public class Controller {
       System.out.println(httpost.getURI());
 
       try {
-         httpclient.execute(httpost);
+         HttpResponse execute = httpclient.execute(httpost);
+         
+         if (execute.getStatusLine().getStatusCode() == 401) {
+            showError("Die Zugangsdaten sind inkorrekt.");
+         }
       } catch (ClientProtocolException e) {
          // TODO Auto-generated catch block
          e.printStackTrace();
