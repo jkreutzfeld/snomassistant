@@ -94,13 +94,26 @@ class EventReader implements Runnable {
 				switch (Integer.parseInt(s)) {
 
 				case 4800:
+				   controller.setScreenLocked(true);
+				   controller.setIdentityStatus(false);
+				   break;
 				case 4802:
+				   if (!controller.isScreenLocked()) {
+				      controller.setIdentityStatus(false);
+				   }
+				   break;
 				case 4647:
 					controller.setIdentityStatus(false);
 					break;
+					
 				case 4801:
+				   controller.setScreenLocked(false);
+				   controller.setIdentityStatus(true);
+				   break;
 				case 4803:
-					controller.setIdentityStatus(true);
+				   if (!controller.isScreenLocked()) {
+				      controller.setIdentityStatus(true);
+				   }
 					break;
 				}
 			}
