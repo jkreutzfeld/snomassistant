@@ -44,6 +44,8 @@ public class Controller {
    private boolean loginOnStartup = false;
 
    private boolean logoutOnShutdown = false;
+   
+   private boolean screenLocked = false;
 
    public Controller() {
       System.out.println("OS: "+System.getProperty("os.name"));
@@ -314,6 +316,14 @@ public class Controller {
 
    public void setObserver(LockScreenObserver observer) {
       this.observer = observer;
+   }
+
+   public void setScreenLocked(boolean screenLocked) {
+      this.screenLocked = screenLocked;
+   }
+
+   public boolean isScreenLocked() {
+      return screenLocked;
    }
 
 }
