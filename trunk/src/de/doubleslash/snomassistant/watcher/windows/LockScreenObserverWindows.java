@@ -8,6 +8,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.zip.ZipException;
 
+import org.apache.commons.lang.ArrayUtils;
+
 import de.doubleslash.snomassistant.Controller;
 import de.doubleslash.snomassistant.Utils;
 import de.doubleslash.snomassistant.watcher.LockScreenObserver;
@@ -55,8 +57,18 @@ public class LockScreenObserverWindows implements LockScreenObserver, Runnable {
 		System.out.println(dir);
 		Runtime run = Runtime.getRuntime();
 		Process exec = null;
+		
+		String[] cmds = new String[] {
+				dir.getPath(),
+				(controller.getPhone().length()>0?controller.getPhone():"-"),
+				(controller.getUsername().length()>0?controller.getUsername():"-"),
+				(controller.getPassword().length()>0?controller.getPassword():"-"),
+				Boolean.toString(controller.isEditIdentity1()),
+				Boolean.toString(controller.isEditIdentity2())
+		};
+		System.out.println(ArrayUtils.toString(cmds));
 		try {
-			exec = run.exec(dir.getPath());
+			exec = run.exec(cmds);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
