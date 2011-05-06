@@ -44,103 +44,90 @@ public class Controller {
    private boolean loginOnStartup = false;
 
    private boolean logoutOnShutdown = false;
-   
+
    private boolean screenLocked = false;
 
    public Controller() {
-      System.out.println("OS: "+System.getProperty("os.name"));
+      System.out.println("OS: " + System.getProperty("os.name"));
       this.propertyHandler = new PropertyHandler();
       loadValues();
-      
+
       if (System.getProperty("os.name").equals("Windows 7")) {
          String configured = propertyHandler.get("windowsConfigured");
-         if (configured.equals("") || !Boolean.parseBoolean(configured)){
+         if (configured.equals("") || !Boolean.parseBoolean(configured)) {
             initWindows();
             propertyHandler.set("windowsConfigured", "true");
             propertyHandler.save();
          }
       }
-      
-      
-      addShutdownHook();
+      if (this.observer == null) {
+         String osName = System.getProperty("os.name");
+         System.out.println("Starting Process for " + osName);
+         if (osName.equals("Linux")) {
+            this.observer = new LockScreenObserverLinux(this);
+         } else {
+            this.observer = new LockScreenObserverWindows(this);
+         }
+      }
+
       if (loginOnStartup) {
          setIdentityStatus(true);
       }
       watchLockScreen();
+      watchShutdown();
    }
 
    private void initWindows() {
       System.out.println("Initializing Windows Settings");
-      
+
       URI uri = null;
 
       try {
          uri = Utils.getJarURI();
       } catch (URISyntaxException e) {
-         // TODO Auto-generated catch block
          e.printStackTrace();
       }
       try {
          final URI inf = Utils.getFile(uri, "update_logging.inf");
-         
+
          new Thread(new Runnable() {
             @Override
             public void run() {
                Runtime run = Runtime.getRuntime();
                String path = inf.getPath().substring(1).replace('/', '\\');
                String tempFolderPath = path.substring(0, path.lastIndexOf('\\'));
-               String[] cmds = new String[] {"secedit", "/configure", "/db", tempFolderPath+"\\secedit.sdb", "/cfg", path};
+               String[] cmds = new String[] { "secedit", "/configure", "/db",
+                     tempFolderPath + "\\secedit.sdb", "/cfg", path };
                try {
-                  System.out.println("Running command: "+StringUtils.join(cmds, " "));
+                  System.out.println("Running command: "
+                        + StringUtils.join(cmds, " "));
                   Process exec = run.exec(cmds);
-                  BufferedReader stdInput = new BufferedReader(new InputStreamReader(
-                        exec.getInputStream()));
+                  BufferedReader stdInput = new BufferedReader(
+                        new InputStreamReader(exec.getInputStream()));
                   String s;
                   while ((s = stdInput.readLine()) != null) {
                      System.out.println(s);
                   }
-                  
-                  
+
                } catch (IOException e) {
-                  // TODO Auto-generated catch block
                   e.printStackTrace();
                }
             }
          }).start();
-         
+
       } catch (ZipException e) {
-         // TODO Auto-generated catch block
          e.printStackTrace();
       } catch (IOException e) {
-         // TODO Auto-generated catch block
          e.printStackTrace();
       }
-   }
-
-   private void addShutdownHook() {
-      Runtime run = Runtime.getRuntime();
-      run.addShutdownHook(new Thread(new ShutdownHook(this)));
    }
 
    public void watchLockScreen() {
-      if (linkWithLock) {
-         if (this.observer == null) {
-            String osName = System.getProperty("os.name");
-            System.out.println("Starting Process for " + osName);
-            if (osName.equals("Linux")) {
-               this.observer = new LockScreenObserverLinux(this);
-            } else {
-               this.observer = new LockScreenObserverWindows(this);
-            }
-         }
-         System.out.println("Observing..");
-      } else {
-         if (this.observer != null) {
-            this.observer.kill();
-            this.observer = null;
-         }
-      }
+      this.observer.send("watchLockScreen=" + linkWithLock);
+   }
 
+   public void watchShutdown() {
+      this.observer.send("watchShutdown=" + logoutOnShutdown);
    }
 
    public void setIdentityStatus(boolean enabled) {
@@ -176,19 +163,17 @@ public class Controller {
       try {
          httpost.setEntity(new UrlEncodedFormEntity(nvps, HTTP.UTF_8));
       } catch (UnsupportedEncodingException e1) {
-         // TODO Auto-generated catch block
          e1.printStackTrace();
       }
       System.out.println(httpost.getURI());
 
       try {
          HttpResponse execute = httpclient.execute(httpost);
-         
+
          if (execute.getStatusLine().getStatusCode() == 401) {
             showError("Die Zugangsdaten sind inkorrekt.");
          }
       } catch (ClientProtocolException e) {
-         // TODO Auto-generated catch block
          e.printStackTrace();
       } catch (IOException e) {
          if (e instanceof UnknownHostException) {
@@ -209,6 +194,7 @@ public class Controller {
 
    public void setPhone(String phone) {
       this.phone = phone;
+      this.observer.send("phone="+this.phone);
    }
 
    public String getUsername() {
@@ -217,6 +203,7 @@ public class Controller {
 
    public void setUsername(String username) {
       this.username = username;
+      this.observer.send("user="+this.username);
    }
 
    public String getPassword() {
@@ -225,6 +212,7 @@ public class Controller {
 
    public void setPassword(String password) {
       this.password = password;
+      this.observer.send("password="+this.password);
    }
 
    public boolean isEditIdentity1() {
@@ -233,6 +221,7 @@ public class Controller {
 
    public void setEditIdentity1(boolean editIdentity1) {
       this.editIdentity1 = editIdentity1;
+      this.observer.send("identity1="+this.editIdentity1);
    }
 
    public boolean isEditIdentity2() {
@@ -241,6 +230,7 @@ public class Controller {
 
    public void setEditIdentity2(boolean editIdentity2) {
       this.editIdentity2 = editIdentity2;
+      this.observer.send("identity2="+this.editIdentity2);
    }
 
    public PropertyHandler getPropertyHandler() {
@@ -309,7 +299,7 @@ public class Controller {
       this.logoutOnShutdown = selected;
 
    }
-   
+
    public LockScreenObserver getObserver() {
       return observer;
    }

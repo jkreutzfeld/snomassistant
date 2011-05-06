@@ -38,11 +38,15 @@ public class LockScreenObserverLinux implements Runnable, LockScreenObserver {
 			DBusConnection connection = DBusConnection.getConnection(DBusConnection.SESSION);
 			connection.removeSigHandler(org.gnome.ScreenSaver.ActiveChanged.class, handler);
 		} catch (DBusException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 	}
+
+   @Override
+   public void send(String data) {
+      
+   }
 
 }
 class Handler implements DBusSigHandler<org.gnome.ScreenSaver.ActiveChanged> {
