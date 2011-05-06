@@ -34,7 +34,7 @@ public class LockScreenObserverWindows implements LockScreenObserver, Runnable {
 			e.printStackTrace();
 		}
 		try {
-			this.exe = Utils.getFile(uri, "EventListener.exe");
+			this.exe = Utils.getFile(uri, "SnomAssistantNativeHelper.exe");
 		} catch (ZipException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
