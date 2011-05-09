@@ -71,18 +71,18 @@ public class AssistantGui implements ActionListener, DocumentListener
 
       frmSnomAssistant = new JDialog();
       frmSnomAssistant.setTitle("Snom Assistent");
-      frmSnomAssistant.setBounds(100, 100, 350, 366);
+      frmSnomAssistant.setBounds(100, 100, 377, 399);
       frmSnomAssistant.getContentPane().setLayout(null);
       frmSnomAssistant.setResizable(false);
 
       JButton btnActivate = new JButton("Aktivieren");
-      btnActivate.setBounds(190, 133, 140, 25);
+      btnActivate.setBounds(217, 134, 140, 25);
       btnActivate.addActionListener(this);
       btnActivate.setActionCommand("activate");
       frmSnomAssistant.getContentPane().add(btnActivate);
 
       JButton btnDeactivate = new JButton("Deaktivieren");
-      btnDeactivate.setBounds(190, 170, 140, 25);
+      btnDeactivate.setBounds(217, 171, 140, 25);
       btnDeactivate.setActionCommand("deactivate");
       btnDeactivate.addActionListener(this);
       frmSnomAssistant.getContentPane().add(btnDeactivate);
@@ -108,7 +108,7 @@ public class AssistantGui implements ActionListener, DocumentListener
 
       txtPhone = new JTextField();
       txtPhone.setText(controller.getPhone());
-      txtPhone.setBounds(156, 12, 174, 27);
+      txtPhone.setBounds(156, 12, 201, 27);
       txtPhone.getDocument().addDocumentListener(this);
       txtPhone.getDocument().putProperty("identifier", "phone");
       frmSnomAssistant.getContentPane().add(txtPhone);
@@ -116,7 +116,7 @@ public class AssistantGui implements ActionListener, DocumentListener
 
       txtUser = new JTextField();
       txtUser.setText(controller.getUsername());
-      txtUser.setBounds(156, 39, 174, 27);
+      txtUser.setBounds(156, 39, 201, 27);
       txtUser.getDocument().addDocumentListener(this);
       txtUser.getDocument().putProperty("identifier", "username");
       frmSnomAssistant.getContentPane().add(txtUser);
@@ -126,7 +126,7 @@ public class AssistantGui implements ActionListener, DocumentListener
       txtPassword.setText(controller.getPassword());
       txtPassword.getDocument().addDocumentListener(this);
       txtPassword.getDocument().putProperty("identifier", "password");
-      txtPassword.setBounds(156, 66, 174, 27);
+      txtPassword.setBounds(156, 66, 201, 27);
       frmSnomAssistant.getContentPane().add(txtPassword);
 
       JCheckBox chckbxIdentity1 = new JCheckBox("Identität 1");
@@ -145,22 +145,30 @@ public class AssistantGui implements ActionListener, DocumentListener
 
       JSeparator separator = new JSeparator();
       separator.setForeground(Color.LIGHT_GRAY);
-      separator.setBounds(12, 243, 318, 2);
+      separator.setBounds(12, 243, 345, 2);
       frmSnomAssistant.getContentPane().add(separator);
       JCheckBox chckbxLoginOnStartup = new JCheckBox("Beim Start Identitäten aktivieren");
-      chckbxLoginOnStartup.setBounds(12, 280, 318, 23);
+      chckbxLoginOnStartup.setBounds(12, 307, 318, 23);
       chckbxLoginOnStartup.setSelected(controller.isLoginOnStartup());
       chckbxLoginOnStartup.setActionCommand("loginOnStartup");
       chckbxLoginOnStartup.addActionListener(this);
       frmSnomAssistant.getContentPane().add(chckbxLoginOnStartup);
 
-      JCheckBox chckbxLogoutOnShutdown = new JCheckBox("Beim Beenden Identitäten deaktivieren");
+      JCheckBox chckbxLogoutOnShutdown = new JCheckBox("Beim Herunterfahren Identitäten deaktivieren");
       chckbxLogoutOnShutdown.setEnabled(!System.getProperty("os.name").equals("Linux"));
-      chckbxLogoutOnShutdown.setBounds(12, 308, 318, 23);
+      chckbxLogoutOnShutdown.setBounds(12, 334, 357, 23);
       chckbxLogoutOnShutdown.setSelected(controller.isLogoutOnShutdown());
       chckbxLogoutOnShutdown.setActionCommand("logoutOnShutdown");
       chckbxLogoutOnShutdown.addActionListener(this);
       frmSnomAssistant.getContentPane().add(chckbxLogoutOnShutdown);
+      
+      JCheckBox chckbxLinkScreensaver = new JCheckBox("Mit Bildschirmschoner verbinden");
+      chckbxLinkScreensaver.setBounds(12, 280, 274, 23);
+      chckbxLinkScreensaver.setEnabled(!System.getProperty("os.name").equals("Linux"));
+      chckbxLinkScreensaver.setSelected(controller.isLinkWithScreensaver());
+      chckbxLinkScreensaver.setActionCommand("linkWithScreensaver");
+      chckbxLinkScreensaver.addActionListener(this);
+      frmSnomAssistant.getContentPane().add(chckbxLinkScreensaver);
 
       SystemTray tray = SystemTray.getSystemTray();
 
@@ -229,6 +237,7 @@ public class AssistantGui implements ActionListener, DocumentListener
          frmSnomAssistant.setVisible(true);
       }
       else if ("quit".equals(e.getActionCommand())) {
+         controller.handleExit();
          System.exit(0);
       }
       else if ("loginOnStartup".equals(e.getActionCommand())) {
@@ -240,6 +249,11 @@ public class AssistantGui implements ActionListener, DocumentListener
          JCheckBox box = (JCheckBox) e.getSource();
          controller.setLogoutOnShutdown(box.isSelected());
          controller.watchShutdown();
+         controller.saveValues();
+      } 
+      else if ("linkWithScreensaver".equals(e.getActionCommand())) {
+         JCheckBox box = (JCheckBox) e.getSource();
+         controller.setLinkWithScreensaver(box.isSelected());
          controller.saveValues();
       }
    }

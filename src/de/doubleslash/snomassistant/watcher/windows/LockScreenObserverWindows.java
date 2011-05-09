@@ -56,6 +56,7 @@ public class LockScreenObserverWindows implements LockScreenObserver, Runnable {
    }
 
    public void kill() {
+      this.send("exit");
       this.thread.interrupt();
    }
 
@@ -135,7 +136,7 @@ class CommunicationServer implements Runnable {
                   controller.setIdentityStatus(false);
                   break;
                case 4802:
-                  if (!controller.isScreenLocked()) {
+                  if (!controller.isScreenLocked() && controller.isLinkWithScreensaver()) {
                      controller.setIdentityStatus(false);
                   }
                   break;
@@ -148,7 +149,7 @@ class CommunicationServer implements Runnable {
                   controller.setIdentityStatus(true);
                   break;
                case 4803:
-                  if (!controller.isScreenLocked()) {
+                  if (!controller.isScreenLocked() && controller.isLinkWithScreensaver()) {
                      controller.setIdentityStatus(true);
                   }
                   break;
