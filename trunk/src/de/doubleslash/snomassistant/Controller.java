@@ -38,6 +38,7 @@ public class Controller {
    private boolean editIdentity1 = false;
    private boolean editIdentity2 = false;
    private boolean linkWithLock = false;
+   private boolean linkWithScreensaver = false;
 
    private LockScreenObserver observer;
 
@@ -252,6 +253,7 @@ public class Controller {
             .get("loginOnStartup"));
       logoutOnShutdown = Boolean.parseBoolean(propertyHandler
             .get("logoutOnShutdown"));
+      linkWithScreensaver = Boolean.parseBoolean(propertyHandler.get("linkWithScreensaver"));
    }
 
    public void setPropertyHandler(PropertyHandler propertyHandler) {
@@ -270,6 +272,7 @@ public class Controller {
       propertyHandler.set("loginOnStartup", Boolean.toString(loginOnStartup));
       propertyHandler.set("logoutOnShutdown",
             Boolean.toString(logoutOnShutdown));
+      propertyHandler.set("linkWithScreensaver", Boolean.toString(linkWithScreensaver));
 
       propertyHandler.save();
    }
@@ -314,6 +317,18 @@ public class Controller {
 
    public boolean isScreenLocked() {
       return screenLocked;
+   }
+
+   public void setLinkWithScreensaver(boolean linkWithScreensaver) {
+      this.linkWithScreensaver = linkWithScreensaver;
+   }
+
+   public boolean isLinkWithScreensaver() {
+      return linkWithScreensaver;
+   }
+
+   public void handleExit() {
+      this.observer.kill();
    }
 
 }

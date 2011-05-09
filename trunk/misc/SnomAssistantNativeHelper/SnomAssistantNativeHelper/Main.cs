@@ -23,6 +23,8 @@ namespace SnomAssistantNativeHelper
 		public Boolean watchLockScreen = false;
 		public int port = 8800;
 		public String lineToWrite = "";
+		
+		public Boolean alive = true;
 
 		public AutoResetEvent signal;
 
@@ -132,14 +134,16 @@ namespace SnomAssistantNativeHelper
 				this.watchLockScreen = true;
 			} else if (response.StartsWith ("user=")) {
 				this.user = response.Substring (response.IndexOf ('=') + 1);
-			} else if (response.Equals ("password=")) {
+			} else if (response.StartsWith ("password=")) {
 				this.password = response.Substring (response.IndexOf ('=') + 1);
-			} else if (response.Equals ("phone=")) {
+			} else if (response.StartsWith ("phone=")) {
 				this.snomNr = response.Substring (response.IndexOf ('=') + 1);
-			} else if (response.Equals ("identity1=")) {
+			} else if (response.StartsWith ("identity1=")) {
 				this.identity1 = Boolean.Parse (response.Substring (response.IndexOf ('=') + 1));
-			} else if (response.Equals ("identity2=")) {
+			} else if (response.StartsWith ("identity2=")) {
 				this.identity2 = Boolean.Parse (response.Substring (response.IndexOf ('=') + 1));
+			} else if (response.Equals("exit")) {
+				this.alive = false;
 			}
 		}
 	}
@@ -166,7 +170,7 @@ namespace SnomAssistantNativeHelper
 		{
 			this.tcpListener.Start ();
 			
-			while (true) {
+			while (c.alive) {
 				//blocks until a client has connected to the server
 				TcpClient client = this.tcpListener.AcceptTcpClient ();
 				
@@ -185,7 +189,7 @@ namespace SnomAssistantNativeHelper
 			byte[] message = new byte[4096];
 			int bytesRead;
 			
-			while (true) {
+			while (c.alive) {
 				bytesRead = 0;
 				
 				try {
