@@ -3,12 +3,18 @@ Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SnomAssistantNativeHelper", "SnomAssistantNativeHelper\SnomAssistantNativeHelper.csproj", "{CE6570F5-E064-47C7-A1F4-25E2FA20EC06}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Snom870Test", "Snom870Test\Snom870Test.csproj", "{C2329C62-D404-452B-B1BB-C2A1161F110E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C2329C62-D404-452B-B1BB-C2A1161F110E}.Debug|x86.ActiveCfg = Debug|x86
+		{C2329C62-D404-452B-B1BB-C2A1161F110E}.Debug|x86.Build.0 = Debug|x86
+		{C2329C62-D404-452B-B1BB-C2A1161F110E}.Release|x86.ActiveCfg = Release|x86
+		{C2329C62-D404-452B-B1BB-C2A1161F110E}.Release|x86.Build.0 = Release|x86
 		{CE6570F5-E064-47C7-A1F4-25E2FA20EC06}.Debug|x86.ActiveCfg = Debug|x86
 		{CE6570F5-E064-47C7-A1F4-25E2FA20EC06}.Debug|x86.Build.0 = Debug|x86
 		{CE6570F5-E064-47C7-A1F4-25E2FA20EC06}.Release|x86.ActiveCfg = Release|x86

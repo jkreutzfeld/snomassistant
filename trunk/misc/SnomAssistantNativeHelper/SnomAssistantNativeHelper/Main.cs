@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
@@ -91,30 +92,21 @@ namespace SnomAssistantNativeHelper
 		{
 			String param = "l=" + identity + "&Settings=Save&user_active" + identity + "=off";
 			String url = "http://snom-" + snomNr + "/line_login.htm?" + param;
+			WebClient c = new WebClient();
+            NameValueCollection list = new NameValueCollection();
+			list["Settings"]="Save";
+			list["user_active"+identity]="off";
 			
 			
-			// create a request
-			HttpWebRequest request = (HttpWebRequest)WebRequest.Create (url);
-			request.KeepAlive = false;
-			request.ProtocolVersion = HttpVersion.Version10;
-			request.Method = "POST";
-			request.Credentials = new NetworkCredential (user, password);
+			c.Encoding = System.Text.Encoding.UTF8;
+		
+			CredentialCache cache = new CredentialCache ();
+			cache.Add (new Uri ("http://snom-"+snomNr+"/"), "Basic", new NetworkCredential (user, password));
+			c.Credentials = cache;
 			
-			// turn our request string into a byte stream
-			byte[] postBytes = Encoding.ASCII.GetBytes (param);
 			
-			// this is important - make sure you specify type this way
-			request.ContentType = "application/x-www-form-urlencoded";
-			request.ContentLength = postBytes.Length;
-			Stream requestStream = request.GetRequestStream ();
 			
-			// now send it
-			requestStream.Write (postBytes, 0, postBytes.Length);
-			requestStream.Close ();
-			
-			// grab the response and print it out to the console along with the status code
-			HttpWebResponse response = (HttpWebResponse)request.GetResponse ();
-			Console.WriteLine (response.StatusCode);
+			c.UploadValues(new Uri(url),"POST",list);
 		}
 		// end HttpPost 
 
