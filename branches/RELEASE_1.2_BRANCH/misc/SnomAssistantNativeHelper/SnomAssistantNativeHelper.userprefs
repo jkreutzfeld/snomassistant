@@ -1,0 +1,13 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release|x86" ctype="Workspace" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="SnomAssistantNativeHelper/Main.cs" ctype="Workbench">
+    <Files>
+      <File FileName="SnomAssistantNativeHelper/Main.cs" Line="98" Column="38" />
+      <File FileName="Snom870Test/Main.cs" Line="3" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches ctype="PinnedWatchStore" />
+</Properties>

@@ -1,0 +1,12 @@
+<launch4jConfig>
+  <headerType>gui</headerType>
+  <jar>../build/SnomAssistant.jar</jar>
+  <outfile>../build/SnomAssistant.exe</outfile>
+  <errTitle>SnomAssistant</errTitle>
+  <chdir>.</chdir>
+  <customProcName>true</customProcName>
+  <icon>SnomAssistant.ico</icon>
+  <jre>
+    <minVersion>1.6.0</minVersion>
+  </jre>
+</launch4jConfig>
